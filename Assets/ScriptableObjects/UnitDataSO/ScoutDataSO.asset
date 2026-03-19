@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ccead9e10f57fb46877fbd85975a3b0, type: 3}
+  m_Name: ScoutDataSO
+  m_EditorClassIdentifier: 
+  UnitName: Scout
+  Cost: 5
+  MaxHealth: 100
+  MoveRange: 5
+  AttackPower: 1
+  Prefab: {fileID: 874435121145090145, guid: a65675f17f04b0749bc34c8557a4782e, type: 3}
