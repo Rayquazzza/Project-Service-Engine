@@ -62,6 +62,8 @@ public class GameManager : MonoBehaviour
     {
         List<Player> tempPlayers = new List<Player>();
 
+        turnService.ResetPlayer();
+
         foreach (var pc in playerControllers)
         {
             Player player = new Player(pc.Data, pc.Cam);

@@ -39,7 +39,11 @@ public class TurnService : ITurnService
         
     }
 
-    
+    public void ResetPlayer()
+    {
+        players.Clear();
+        currentIndex = 0;
+    }
 
     public TurnService()
     {

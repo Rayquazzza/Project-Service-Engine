@@ -155,11 +155,15 @@ public class GridDisplay : MonoBehaviour, IGridDisplayService
 
     private void GenerateVisualGrid(int width, int height)
     {
+        foreach (Transform child in cellsParent.transform)
+            poolingService.ReturnToPool(cellPrefab, child.gameObject);
+
+        cellViews.Clear();
+
         this.width = width;
         this.height = height;
 
-        foreach(Transform child in cellsParent.transform) 
-            poolingService.ReturnToPool(cellPrefab, child.gameObject);
+        
         
         for (int x = 0; x < width; x++)
         {

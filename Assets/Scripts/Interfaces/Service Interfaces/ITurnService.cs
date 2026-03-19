@@ -7,4 +7,6 @@ public interface ITurnService : IDisposableService
     Player CurrentPlayer { get; }
     void NextTurn();
     void RegisterPlayer(Player player);
+
+    void ResetPlayer();
 }
