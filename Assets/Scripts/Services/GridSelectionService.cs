@@ -14,6 +14,7 @@ public class GridSelectionService : MonoBehaviour, ISelectionService
     public event Action<Cell> OnCellRightClicked;
 
     public IOccupant SelectedOccupant { get; private set; }
+    public Cell SelectedCell { get; private set; }
 
     private IGridService gridService;
     private ITurnService turnService;
@@ -70,19 +71,29 @@ public class GridSelectionService : MonoBehaviour, ISelectionService
 
         if (SelectedOccupant != null && inRange && !hasAlreadyMoved)
         {
-            if (clickedCell.IsEmpty || isEnemy)
+            if (SelectedCell.Occupants.Count > 1)
             {
-                Debug.Log($"{LogTag} Move/Combat Request at {clickedCell.Coords}");
-                OnMoveRequest?.Invoke(SelectedOccupant, clickedCell.Coords);
-                ClearSelection();
-                OnSelectionUpdated?.Invoke(null, null);
-                return;
+                if (clickedCell.IsEmpty || isEnemy)
+                {        
+                    Debug.Log($"{LogTag} Move/Combat Request at {clickedCell.Coords}");
+                    OnMoveRequest?.Invoke(SelectedOccupant, clickedCell.Coords);
+                    ClearSelection();
+                    OnSelectionUpdated?.Invoke(null, null);
+                    return;
+                }
+                else
+                {
+                    Debug.Log($"the cell has actually {clickedCell.Occupants.Count} Occupants");
+                    Debug.LogWarning($"{LogTag} Can't move, at least one unit should be stay at the cell");
+                }
+                
             }
         }
 
         if (isPlayerUnit)
         {
             SelectedOccupant = occupantInCase;
+            SelectedCell = clickedCell;
             currentRange = gridService?.GetAvailableMoves(SelectedOccupant);
             OnSelectionUpdated?.Invoke(SelectedOccupant, currentRange);
         }
@@ -96,6 +107,7 @@ public class GridSelectionService : MonoBehaviour, ISelectionService
     private void ClearSelection()
     {
         SelectedOccupant = null;
+        SelectedCell =  null;
         currentRange.Clear();
     }
 

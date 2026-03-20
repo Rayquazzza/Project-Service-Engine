@@ -50,7 +50,6 @@ public class CellView : MonoBehaviour
             _ => defaultColor
         };
 
-        Debug.Log($"Updated visuals for Cell at {data.Coords}: State={GetCurrentState()}");
     }
 
     public void Highlight(bool active)

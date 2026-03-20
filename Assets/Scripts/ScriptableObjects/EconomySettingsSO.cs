@@ -7,5 +7,7 @@ public class EconomySettingsSO : ScriptableObject
     public int BaseTurnIncome = 10;
     [Header("Cell Modifiers")]
     public int VitalZoneMultiplier = 5;
-    public FloatRange CellMultiplierRange; // min/max pour les cases normales
+    public int VitalZoneCellMultiplier = 5; 
+    public int ProximityMultiplier = 2;   
+    public FloatRange CellMultiplierRange;
 }

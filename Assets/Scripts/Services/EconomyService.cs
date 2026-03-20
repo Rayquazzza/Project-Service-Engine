@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -39,16 +39,28 @@ public class EconomyService : IEconomyService
 
     public void ApplyVitalZoneProximity()
     {
-        var vitalZones = gridService.GetAllCells().Where(c => c.IsVitalZone).Select(c => c.Coords).ToList();
+        var vitalZoneCells = gridService.GetAllCells().Where(c => c.IsVitalZone).ToList();
 
-        if (vitalZones.Count == 0) return;
+        Debug.Log($"ApplyVitalZoneProximity: {vitalZoneCells.Count} vital zones trouvées");
+        foreach (var vz in vitalZoneCells)
+            Debug.Log($"Vital zone at {vz.Coords}");
+
+        if (vitalZoneCells.Count == 0) return;
+
+        var vitalZoneCoords = vitalZoneCells.Select(c => c.Coords).ToList();
 
         foreach (var cell in gridService.GetAllCells())
         {
-            int closestDist = vitalZones.Min(vz => Mathf.Abs(cell.Coords.x - vz.x) + Mathf.Abs(cell.Coords.y - vz.y));
+            int closestDist = vitalZoneCoords.Min(vz =>
+                Mathf.Abs(cell.Coords.x - vz.x) + Mathf.Abs(cell.Coords.y - vz.y));
 
             if (closestDist <= 3)
-                cell.ResourceMultiplier = 2;
+                Debug.Log($"Cell {cell.Coords} → dist {closestDist} → multiplier {(closestDist == 0 ? settings.VitalZoneCellMultiplier : settings.ProximityMultiplier)}");
+
+            if (closestDist == 0)
+                cell.ResourceMultiplier = settings.VitalZoneCellMultiplier;
+            else if (closestDist <= 3)
+                cell.ResourceMultiplier = settings.ProximityMultiplier;
         }
     }
     public bool CanAfford(Player player, int amount)

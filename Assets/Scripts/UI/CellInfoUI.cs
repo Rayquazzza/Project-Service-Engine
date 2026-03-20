@@ -38,6 +38,7 @@ public class CellInfoUI : MonoBehaviour
     private void HandleTurnChanged(Player player)
     {
         currentPlayer = player;
+        Debug.Log($"CellInfoUI: Current player changed to {currentPlayer.Data.playerName}");
     }
 
     private void HandleHoverChanged(CellView cellView)
@@ -54,28 +55,26 @@ public class CellInfoUI : MonoBehaviour
 
     private void UpdateUI(Cell data)
     {
-        if (data.Coords != null) coordsText.text = $"Coords: {data.Coords.x}, {data.Coords.y}";
+        coordsText.text = $"Coords: {data.Coords.x}, {data.Coords.y}";
+        resourceMultiplierText.text = $"Resource Multiplier: {data.ResourceMultiplier}x";
 
-        bool isCurrentPlayer = data.ZoneOwner == currentPlayer; 
+        bool isOwnedByCurrentPlayer = data.ZoneOwner == currentPlayer;
+
         bool hasOwner = data.ZoneOwner != null && data.ZoneOwner == currentPlayer;
-        bool isVitalZone = hasOwner && data.IsVitalZone;    
         ownerText.gameObject.SetActive(hasOwner);
         if (hasOwner) ownerText.text = $"Owner: {data.ZoneOwner.Data.playerName}";
 
-        bool hasOccupants = hasOwner && data.Occupants != null && data.Occupants.Count > 0;
+        bool hasOccupants = isOwnedByCurrentPlayer && data.Occupants != null && data.Occupants.Count > 0;
         occupantsText.gameObject.SetActive(hasOccupants);
         if (hasOccupants) occupantsText.text = $"Units: {data.Occupants.Count}";
 
-        vitalZoneText.gameObject.SetActive(isVitalZone);
-        if (isVitalZone) vitalZoneText.text = "Vital Zone";
-
-        bool hasResourceMultiplier = data.ResourceMultiplier >= 1f;
-        resourceMultiplierText.gameObject.SetActive(hasResourceMultiplier);
-        if (hasResourceMultiplier) resourceMultiplierText.text = $"Resource Multiplier: {data.ResourceMultiplier}x";
+        bool showVitalZone = isOwnedByCurrentPlayer && data.IsVitalZone;
+        vitalZoneText.gameObject.SetActive(showVitalZone);
+        if (showVitalZone) vitalZoneText.text = "Vital Zone";
     }
 
     private void OnDestroy()
-    {
+    {     
         if (gridInput != null) gridInput.OnCellHoverChanged -= HandleHoverChanged;
         if (turnService != null) turnService.OnTurnChanged -= HandleTurnChanged;
     }

@@ -327,6 +327,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3580859916924160789, guid: 2475feebecdab2f41bcf696d930f5d14, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3580859916924160789, guid: 2475feebecdab2f41bcf696d930f5d14, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3580859916924160789, guid: 2475feebecdab2f41bcf696d930f5d14, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3580859916924160789, guid: 2475feebecdab2f41bcf696d930f5d14, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278190080
+      objectReference: {fileID: 0}
     - target: {fileID: 3748134908222824153, guid: 2475feebecdab2f41bcf696d930f5d14, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -350,6 +366,22 @@ PrefabInstance:
     - target: {fileID: 3748134908222824153, guid: 2475feebecdab2f41bcf696d930f5d14, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273379265388344292, guid: 2475feebecdab2f41bcf696d930f5d14, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273379265388344292, guid: 2475feebecdab2f41bcf696d930f5d14, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273379265388344292, guid: 2475feebecdab2f41bcf696d930f5d14, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273379265388344292, guid: 2475feebecdab2f41bcf696d930f5d14, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278190080
       objectReference: {fileID: 0}
     - target: {fileID: 6014039040165089264, guid: 2475feebecdab2f41bcf696d930f5d14, type: 3}
       propertyPath: m_AnchorMax.y

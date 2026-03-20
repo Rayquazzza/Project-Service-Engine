@@ -171,7 +171,9 @@ public class GridService : IGridService
 
     private void AddUnitToCell(Cell cell, IOccupant unit)
     {
+        
         if (cell.Occupants.Contains(unit)) return;
+        Debug.Log($"{LogTag} Adding {unit} to cell {cell.Coords}");
         cell.AddOccupant(unit);
 
         var owner = unit.OwnerId;

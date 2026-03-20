@@ -48,8 +48,9 @@ public class GameManager : MonoBehaviour
         if (state == E_GameState.STARTING)
         {
             gridService?.InitializeGrid(gridData.GridWidth, gridData.GridHeight);
-            PlayersSetup();
             if (settings) economyService.Setup(settings);
+            PlayersSetup();
+            economyService.ApplyVitalZoneProximity();
             turnService?.NextTurn();
             StartCoroutine(GoToInGame());
         }
