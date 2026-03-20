@@ -23,6 +23,6 @@ public class PlayerInfoUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        player.OnMoneyChanged -= UpdateMoneyText;
+        if( player != null) player.OnMoneyChanged -= UpdateMoneyText;
     }
 }

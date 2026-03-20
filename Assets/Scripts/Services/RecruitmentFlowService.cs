@@ -20,7 +20,7 @@ public class RecruitmentFlowService : IRecruitmentFlowService
 
     private void HandleRightClickRequest(Cell clickedCell)
     {
-        if (clickedCell.Occupants.Count < 9)
+        if (clickedCell.Occupants.Count < 9 || clickedCell.IsVitalZone)
         {
             PendingSpawnPos = clickedCell.Coords;
             GameServiceLocator.Get<IGameStateService>().ChangeGameState(E_GameState.RECRUITMENT);

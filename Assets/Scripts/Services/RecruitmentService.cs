@@ -46,7 +46,7 @@ public class RecruitmentService : IRecruitmentService
 
         if (unitData == null) return;
 
-        if (economy == null && !economy.CanAfford(currentPlayer, unitData.Cost))
+        if (!economy.CanAfford(currentPlayer, unitData.Cost))
         {
             Debug.LogWarning($"{LogTag} Fonds insuffisants pour {currentPlayer}");
             return;

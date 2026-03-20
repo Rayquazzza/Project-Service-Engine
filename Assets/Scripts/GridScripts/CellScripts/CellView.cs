@@ -31,9 +31,9 @@ public class CellView : MonoBehaviour
 
     private E_CellVisualState GetCurrentState()
     {
+        if (isHovered) return E_CellVisualState.Hovered;
         if (!isVisibleToCurrentPlayer) return E_CellVisualState.Hidden;
         if (data.ZoneOwner != null) return E_CellVisualState.Owned;
-        if (isHovered) return E_CellVisualState.Hovered;
         if (isInSelectionRange) return E_CellVisualState.InRange;
         return E_CellVisualState.Default;
     }

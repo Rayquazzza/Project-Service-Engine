@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEngine;
@@ -26,13 +27,13 @@ public class GameManager : MonoBehaviour
         gameStateService.ChangeGameState(E_GameState.MAIN_MENU);
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            gameStateService?.ChangeGameState(E_GameState.GAME_OVER);
-        }
-    }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Space))
+    //    {
+    //        gameStateService?.ChangeGameState(E_GameState.GAME_OVER);
+    //    }
+    //}
     private void GetServices()
     {
         gameStateService = GameServiceLocator.Get<IGameStateService>();
@@ -48,15 +49,17 @@ public class GameManager : MonoBehaviour
         {
             gridService?.InitializeGrid(gridData.GridWidth, gridData.GridHeight);
             if (settings) economyService.Setup(settings);
-
             PlayersSetup();
-
-            gameStateService?.ChangeGameState(E_GameState.IN_GAME);
-
             turnService?.NextTurn();
+            StartCoroutine(GoToInGame());
         }
     }
 
+    private IEnumerator GoToInGame()
+    {
+        yield return null; // attend la frame suivante
+        gameStateService?.ChangeGameState(E_GameState.IN_GAME);
+    }
 
     private void PlayersSetup()
     {

@@ -237,14 +237,16 @@ public class GridService : IGridService
                 if (distances.ContainsKey(neighbor.Coords)) continue;
 
                 bool isEnemy = !neighbor.IsEmpty && neighbor.Occupants[0].OwnerId != unit.OwnerId;
+                bool isEnemyVitalZone = neighbor.IsVitalZone &&
+                                        neighbor.ZoneOwner != null &&
+                                        neighbor.ZoneOwner != unit.OwnerId;
 
-                if (neighbor.IsEmpty)
+                if (neighbor.IsEmpty || isEnemyVitalZone)
                 {
                     distances[neighbor.Coords] = currentDist + 1;
                     reachableTiles.Add(neighbor.Coords);
                     nodesToVisit.Enqueue(neighbor.Coords);
                 }
-
                 else if (isEnemy)
                 {
                     distances[neighbor.Coords] = currentDist + 1;

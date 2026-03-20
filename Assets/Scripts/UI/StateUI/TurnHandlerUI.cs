@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TurnHandlerUI : MonoBehaviour
+public class TurnHandlerUI : BaseStateUIPanel
 {
     public void NextTurnButton()
     {

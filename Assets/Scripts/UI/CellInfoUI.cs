@@ -1,5 +1,7 @@
 using UnityEngine;
-using TMPro; // N'oublie pas TextMeshPro
+using TMPro;
+using System;
+using Unity.VisualScripting; // N'oublie pas TextMeshPro
 
 public class CellInfoUI : MonoBehaviour
 {
@@ -8,17 +10,34 @@ public class CellInfoUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI coordsText;
     [SerializeField] private TextMeshProUGUI ownerText;
     [SerializeField] private TextMeshProUGUI occupantsText;
+    [SerializeField] private TextMeshProUGUI vitalZoneText;
+    [SerializeField] private TextMeshProUGUI resourceMultiplierText;
 
     private IInputService gridInput;
+    private ITurnService turnService;
+
+    private Player currentPlayer;
 
 
     private void Start()
     {
+        if(panel == null || coordsText == null || ownerText == null || occupantsText == null || vitalZoneText == null || resourceMultiplierText == null)
+        {
+            Debug.LogError("CellInfoUI: One or more UI elements are not assigned in the inspector.");
+            return;
+        }
         gridInput = GameServiceLocator.Get<IInputService>();
+        turnService = GameServiceLocator.Get<ITurnService>();
+        turnService.OnTurnChanged += HandleTurnChanged;
 
         gridInput.OnCellHoverChanged += HandleHoverChanged;
 
         panel.SetActive(false);
+    }
+
+    private void HandleTurnChanged(Player player)
+    {
+        currentPlayer = player;
     }
 
     private void HandleHoverChanged(CellView cellView)
@@ -37,17 +56,27 @@ public class CellInfoUI : MonoBehaviour
     {
         if (data.Coords != null) coordsText.text = $"Coords: {data.Coords.x}, {data.Coords.y}";
 
-        bool hasOwner = data.IsVitalZone && data.ZoneOwner != null;
+        bool isCurrentPlayer = data.ZoneOwner == currentPlayer; 
+        bool hasOwner = data.ZoneOwner != null && data.ZoneOwner == currentPlayer;
+        bool isVitalZone = hasOwner && data.IsVitalZone;    
         ownerText.gameObject.SetActive(hasOwner);
-        if (hasOwner) ownerText.text = $"Owner: {data.ZoneOwner.Data.name}";
+        if (hasOwner) ownerText.text = $"Owner: {data.ZoneOwner.Data.playerName}";
 
-        bool hasOccupants = data.Occupants != null && data.Occupants.Count > 0;
+        bool hasOccupants = hasOwner && data.Occupants != null && data.Occupants.Count > 0;
         occupantsText.gameObject.SetActive(hasOccupants);
         if (hasOccupants) occupantsText.text = $"Units: {data.Occupants.Count}";
+
+        vitalZoneText.gameObject.SetActive(isVitalZone);
+        if (isVitalZone) vitalZoneText.text = "Vital Zone";
+
+        bool hasResourceMultiplier = data.ResourceMultiplier >= 1f;
+        resourceMultiplierText.gameObject.SetActive(hasResourceMultiplier);
+        if (hasResourceMultiplier) resourceMultiplierText.text = $"Resource Multiplier: {data.ResourceMultiplier}x";
     }
 
     private void OnDestroy()
     {
         if (gridInput != null) gridInput.OnCellHoverChanged -= HandleHoverChanged;
+        if (turnService != null) turnService.OnTurnChanged -= HandleTurnChanged;
     }
 }

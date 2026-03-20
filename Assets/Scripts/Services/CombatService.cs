@@ -28,10 +28,11 @@ public class CombatService : ICombatService
         float totalAtkPower = CalculateTotalPower(attackers);
         float totalDefPower = CalculateTotalPower(defenders);
 
-        bool attackersWin = totalAtkPower >= totalDefPower;
+        bool isTie = Mathf.Approximately(totalAtkPower, totalDefPower);
+        bool attackersWin = !isTie && totalAtkPower > totalDefPower;
 
-        float attackerRatio = attackersWin ? (totalDefPower / totalAtkPower) : 1.0f;
-        float defenderRatio = attackersWin ? 1.0f : (totalAtkPower / totalDefPower);
+        float attackerRatio = isTie ? 1.0f : (attackersWin ? totalDefPower / totalAtkPower : 1.0f);
+        float defenderRatio = isTie ? 0.0f : (attackersWin ? 1.0f : totalAtkPower / totalDefPower);
 
         ApplyDamageToGroup(attackers, attackerRatio);
         ApplyDamageToGroup(defenders, defenderRatio);

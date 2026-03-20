@@ -35,21 +35,22 @@ public class EconomyService : IEconomyService
 
     private void ApplyRandomMultipliers()
     {
-        var vitalZones = gridService.GetAllCells().Where(c => c.IsVitalZone).Select(c => c.Coords).ToList();
+        var vitalZones = gridService.GetAllCells()
+            .Where(c => c.IsVitalZone)
+            .Select(c => c.Coords)
+            .ToList();
 
         foreach (var cell in gridService.GetAllCells())
         {
-            float random = Random.Range(settings.CellMultiplierRange.min,settings.CellMultiplierRange.max);
+            int random = Random.Range((int)settings.CellMultiplierRange.min, (int)settings.CellMultiplierRange.max + 1);
 
             if (vitalZones.Count > 0)
             {
-                int closestDist = vitalZones.Min(vitalZone => Mathf.Abs(cell.Coords.x - vitalZone.x) + Mathf.Abs(cell.Coords.y - vitalZone.y));
+                int closestDist = vitalZones.Min(vz =>
+                    Mathf.Abs(cell.Coords.x - vz.x) + Mathf.Abs(cell.Coords.y - vz.y));
 
-                if (closestDist <= settings.ProximityRadius)
-                {
-                    float penalty = 1f - (settings.ProximityRadius - closestDist) * settings.ProximityPenaltyPerTile;
-                    random *= Mathf.Max(penalty, 0f); 
-                }
+                if (closestDist <= 3)
+                    random = 2;
             }
 
             cell.ResourceMultiplier = random;
@@ -64,6 +65,7 @@ public class EconomyService : IEconomyService
     {
         if (CanAfford(player, amount))
             player.CurrentMoney -= amount;
+        if(player.CurrentMoney < 0) player.CurrentMoney = 0;
     }
 
     public void AddMoney(Player player, int amount)
