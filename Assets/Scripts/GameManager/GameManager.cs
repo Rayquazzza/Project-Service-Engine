@@ -48,8 +48,8 @@ public class GameManager : MonoBehaviour
         if (state == E_GameState.STARTING)
         {
             gridService?.InitializeGrid(gridData.GridWidth, gridData.GridHeight);
-            if (settings) economyService.Setup(settings);
             PlayersSetup();
+            if (settings) economyService.Setup(settings);
             turnService?.NextTurn();
             StartCoroutine(GoToInGame());
         }

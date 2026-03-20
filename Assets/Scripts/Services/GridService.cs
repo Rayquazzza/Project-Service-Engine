@@ -234,23 +234,35 @@ public class GridService : IGridService
 
             foreach (var neighbor in GetNeighbors(current))
             {
-                if (distances.ContainsKey(neighbor.Coords)) continue;
+                //Debug.Log($" ========= {LogTag} {neighbor.Coords} ========= ");
+                if (distances.ContainsKey(neighbor.Coords))
+                {
+                    //Debug.Log($"Skipping {neighbor.Coords} - already visited");
+                    continue;
+                }
 
                 bool isEnemy = !neighbor.IsEmpty && neighbor.Occupants[0].OwnerId != unit.OwnerId;
-                bool isEnemyVitalZone = neighbor.IsVitalZone &&
-                                        neighbor.ZoneOwner != null &&
-                                        neighbor.ZoneOwner != unit.OwnerId;
+                bool isEnemyVitalZone = neighbor.IsVitalZone && neighbor.ZoneOwner != null && neighbor.ZoneOwner != unit.OwnerId;
+
+                //Debug.Log($" {neighbor.Coords} is Enemy =  {isEnemy} , isEnemtVitalZone = {isEnemyVitalZone}");
 
                 if (neighbor.IsEmpty || isEnemyVitalZone)
                 {
+                    //Debug.Log($"Adding {neighbor.Coords} to reachable tiles");
                     distances[neighbor.Coords] = currentDist + 1;
                     reachableTiles.Add(neighbor.Coords);
                     nodesToVisit.Enqueue(neighbor.Coords);
                 }
                 else if (isEnemy)
                 {
+                    //Debug.Log($"Adding {neighbor.Coords} to reachable tiles");
+
                     distances[neighbor.Coords] = currentDist + 1;
                     reachableTiles.Add(neighbor.Coords);
+                }
+                else
+                {
+                    //Debug.Log($"Skipping {neighbor.Coords} - occupied by ally");
                 }
             }
         }

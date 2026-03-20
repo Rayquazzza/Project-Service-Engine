@@ -30,30 +30,25 @@ public class EconomyService : IEconomyService
     public void Setup(EconomySettingsSO settings)
     {
         this.settings = settings;
-        ApplyRandomMultipliers();
-    }
-
-    private void ApplyRandomMultipliers()
-    {
-        var vitalZones = gridService.GetAllCells()
-            .Where(c => c.IsVitalZone)
-            .Select(c => c.Coords)
-            .ToList();
-
         foreach (var cell in gridService.GetAllCells())
         {
             int random = Random.Range((int)settings.CellMultiplierRange.min, (int)settings.CellMultiplierRange.max + 1);
-
-            if (vitalZones.Count > 0)
-            {
-                int closestDist = vitalZones.Min(vz =>
-                    Mathf.Abs(cell.Coords.x - vz.x) + Mathf.Abs(cell.Coords.y - vz.y));
-
-                if (closestDist <= 3)
-                    random = 2;
-            }
-
             cell.ResourceMultiplier = random;
+        }
+    }
+
+    public void ApplyVitalZoneProximity()
+    {
+        var vitalZones = gridService.GetAllCells().Where(c => c.IsVitalZone).Select(c => c.Coords).ToList();
+
+        if (vitalZones.Count == 0) return;
+
+        foreach (var cell in gridService.GetAllCells())
+        {
+            int closestDist = vitalZones.Min(vz => Mathf.Abs(cell.Coords.x - vz.x) + Mathf.Abs(cell.Coords.y - vz.y));
+
+            if (closestDist <= 3)
+                cell.ResourceMultiplier = 2;
         }
     }
     public bool CanAfford(Player player, int amount)

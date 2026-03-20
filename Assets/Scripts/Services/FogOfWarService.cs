@@ -18,6 +18,7 @@ public class FogOfWarService : IFogOfWarService
 
     public void Dispose()
     {
+        if (turnService != null) turnService.OnTurnChanged -= UpdateVisibility;
         GameServiceLocator.Unregister<IFogOfWarService>();
     }
 

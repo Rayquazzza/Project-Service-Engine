@@ -116,6 +116,7 @@ public class GridDisplay : MonoBehaviour, IGridDisplayService
     {
         foreach (var view in cellViews.Values)
         {
+            //Debug.Log("Resetting cell view at " + view.GetData().Coords);
             view.MarkAsRange(false);
         }
 
@@ -123,6 +124,7 @@ public class GridDisplay : MonoBehaviour, IGridDisplayService
         {
             foreach (var pos in range)
             {
+                //Debug.Log("Marking cell view at " + pos + " as in range");
                 if (cellViews.TryGetValue(pos, out var view))
                 {
                     view.MarkAsRange(true);

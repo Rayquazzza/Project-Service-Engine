@@ -32,9 +32,9 @@ public class CellView : MonoBehaviour
     private E_CellVisualState GetCurrentState()
     {
         if (isHovered) return E_CellVisualState.Hovered;
-        if (!isVisibleToCurrentPlayer) return E_CellVisualState.Hidden;
-        if (data.ZoneOwner != null) return E_CellVisualState.Owned;
         if (isInSelectionRange) return E_CellVisualState.InRange;
+        if (!isVisibleToCurrentPlayer) return E_CellVisualState.Hidden;
+        if (data.ZoneOwner != null) return E_CellVisualState.Owned;   
         return E_CellVisualState.Default;
     }
 
@@ -49,6 +49,8 @@ public class CellView : MonoBehaviour
             E_CellVisualState.InRange => rangeColor,
             _ => defaultColor
         };
+
+        Debug.Log($"Updated visuals for Cell at {data.Coords}: State={GetCurrentState()}");
     }
 
     public void Highlight(bool active)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(GridInput))]
@@ -60,14 +61,14 @@ public class GridSelectionService : MonoBehaviour, ISelectionService
 
     public void OnCellLeftClicked(Cell clickedCell)
     {
-        IOccupant occupantInCase = !clickedCell.IsEmpty ? clickedCell.Occupants[0] : null;
+        IOccupant occupantInCase = !clickedCell.IsEmpty ? clickedCell.Occupants.OfType<BaseUnit>().OrderBy(u => u.MoveRange).FirstOrDefault() : null;
 
         bool isEnemy = occupantInCase != null && occupantInCase.OwnerId != turnService.CurrentPlayer;
-        bool hasAlreadyMoved = gridService.HasPlayerMovedThisTurn(); // ← extrait ici
+        bool hasAlreadyMoved = gridService.HasPlayerMovedThisTurn();
         bool isPlayerUnit = occupantInCase != null && occupantInCase.OwnerId == turnService.CurrentPlayer && !hasAlreadyMoved;
         bool inRange = currentRange.Contains(clickedCell.Coords);
 
-        if (SelectedOccupant != null && inRange && !hasAlreadyMoved) // ← ajout du check
+        if (SelectedOccupant != null && inRange && !hasAlreadyMoved)
         {
             if (clickedCell.IsEmpty || isEnemy)
             {
