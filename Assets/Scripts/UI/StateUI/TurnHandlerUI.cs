@@ -4,6 +4,6 @@ public class TurnHandlerUI : BaseStateUIPanel
 {
     public void NextTurnButton()
     {
-        GameServiceLocator.Get<ITurnService>().NextTurn();
+        if(gameStateService.GetCurrentGameState() == E_GameState.IN_GAME)GameServiceLocator.Get<ITurnService>().NextTurn();
     }
 }

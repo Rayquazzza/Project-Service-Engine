@@ -202,7 +202,7 @@ public class GridService : IGridService
     private void RemoveDefinitiveOccupant(Vector2Int coords, IOccupant occupant)
     {
         RemoveOccupant(coords, occupant);
-        OnOccupantRemoved?.Invoke(occupant);
+        OnOccupantDestroyed?.Invoke(occupant);
     }
 
     // ---------- NAVIGATION & SEARCH METHODS ----------

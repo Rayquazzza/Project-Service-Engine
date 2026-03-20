@@ -30,11 +30,10 @@ public class GridInput : MonoBehaviour, IInputService
 
     private void Update()
     {
-        if(gameStateService == null || gameStateService.GetCurrentGameState() != E_GameState.IN_GAME) return;
+        if (gameStateService == null || gameStateService.GetCurrentGameState() != E_GameState.IN_GAME && gameStateService.GetCurrentGameState() != E_GameState.MOVING_UNIT) return;
 
         if (targetCam == null)
         {
-            Debug.LogWarning("Target camera not set for GridInput.");
             return;
         }
 

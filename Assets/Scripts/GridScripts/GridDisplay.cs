@@ -21,13 +21,14 @@ public class GridDisplay : MonoBehaviour, IGridDisplayService
     //DICTIONARIES
     private Dictionary<Vector2Int, CellView> cellViews = new Dictionary<Vector2Int, CellView>();
     private Dictionary<IOccupant, UnitView> unitViews = new Dictionary<IOccupant, UnitView>();
+    private Dictionary<IOccupant, GameObject> unitPrefabs = new Dictionary<IOccupant, GameObject>();
 
     // SERVICES VARIABLES
     private IGridService gridService;
     private ISelectionService selectionService;
     private IFogOfWarService fogService;
     private IPoolingService poolingService;
-    private IPathfindingService pathfindingService;
+    private IGameStateService gameStateService;
 
     //EVENTS
     public event Action<Vector3, Vector2> OnVisualGridGenerated;
@@ -57,7 +58,7 @@ public class GridDisplay : MonoBehaviour, IGridDisplayService
         fogService = GameServiceLocator.Get<IFogOfWarService>();
         selectionService = GameServiceLocator.Get<ISelectionService>();
         poolingService = GameServiceLocator.Get<IPoolingService>();
-        pathfindingService = GameServiceLocator.Get<IPathfindingService>();
+        gameStateService = GameServiceLocator.Get<IGameStateService>();
     }
 
     private void SubscribeToEvents()
@@ -68,11 +69,31 @@ public class GridDisplay : MonoBehaviour, IGridDisplayService
         if(gridService != null) gridService.OnCombatRequested += HandleCombatRequested;
         if (fogService != null) fogService.OnFogOfWarUpdated += HandleFogUpdated;
         if (selectionService != null) selectionService.OnSelectionUpdated += HandleSelectionUpdated;
+        if (gridService != null) gridService.OnOccupantDestroyed += HandleOccupantDestroyed;
     }
+
+
 
     //-----------------------------------------------------------------
 
     //---------- METHODS EVENTS HANDLER ----------
+
+    private void HandleOccupantDestroyed(IOccupant occupant)
+    {
+        if (unitViews.TryGetValue(occupant, out UnitView view))
+        {
+            if (unitPrefabs.TryGetValue(occupant, out GameObject prefab))
+            {
+                poolingService.ReturnToPool(prefab, view.gameObject);
+                unitPrefabs.Remove(occupant);
+            }
+            else
+            {
+                Destroy(view.gameObject);
+            }
+            unitViews.Remove(occupant);
+        }
+    }
 
     private void HandleCombatRequested(List<IOccupant> attackers, Cell targetCell, Action onComplete)
     {
@@ -85,7 +106,9 @@ public class GridDisplay : MonoBehaviour, IGridDisplayService
     }
     private IEnumerator AnimateThenResolve(UnitView view, Vector3 target, Action onComplete)
     {
+        gameStateService.ChangeGameState(E_GameState.MOVING_UNIT);
         yield return view.FollowPath(new List<Vector3> { target });
+        gameStateService.ChangeGameState(E_GameState.IN_GAME);
         onComplete?.Invoke(); 
     }
 
@@ -164,9 +187,7 @@ public class GridDisplay : MonoBehaviour, IGridDisplayService
 
         this.width = width;
         this.height = height;
-
-        
-        
+      
         for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < height; z++)
@@ -199,11 +220,14 @@ public class GridDisplay : MonoBehaviour, IGridDisplayService
     {
         if (gridPath == null || gridPath.Count == 0) { onComplete?.Invoke(); return; }
 
+        gameStateService.ChangeGameState(E_GameState.MOVING_UNIT);
+
         StartCoroutine(AnimateGroupMovement(units, to, gridPath, onComplete));
     }
 
     private IEnumerator AnimateGroupMovement(List<IOccupant> units, Vector2Int to, List<Vector2Int> gridPath, Action onComplete)
     {
+        
         List<Coroutine> activeMovements = new List<Coroutine>();
         CellView destinationView = GetCellView(to);
 
@@ -236,8 +260,9 @@ public class GridDisplay : MonoBehaviour, IGridDisplayService
         }
 
         foreach (var routine in activeMovements) yield return routine;
-
+        
         onComplete?.Invoke();
+        gameStateService.ChangeGameState(E_GameState.IN_GAME);
     }
     public void SpawnInitialUnit(Player player)
     {
@@ -258,12 +283,11 @@ public class GridDisplay : MonoBehaviour, IGridDisplayService
         {
             StartCoroutine(view.FollowPath(path));
         }
-    }    
+    }
 
     private void SpawnUnitPrefab(IOccupant occupant, UnitDataSO data)
     {
         CellView cellView = GetCellView(occupant.GridPosition);
-
         Vector3 worldPos = cellView != null ? cellView.GetAnchorForUnit(occupant).position : GetWorldPositionFromCoords(occupant.GridPosition);
 
         GameObject unitGO = poolingService?.GetFromPool(data.Prefab, worldPos, Quaternion.identity);
@@ -271,6 +295,7 @@ public class GridDisplay : MonoBehaviour, IGridDisplayService
 
         UnitView view = unitGO.GetComponent<UnitView>();
         RegisterUnitView(occupant, view);
+        unitPrefabs[occupant] = data.Prefab; 
     }
 
     //-----------------------------------------------------------------
